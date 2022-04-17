@@ -1,0 +1,921 @@
+00002000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 11/23/2021 2:32:46 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :
+00000000                             3  * Written by :
+00000000                             4  * Date:
+00000000                             5  * Description:
+00000000                             6  *-----------------------------------------------------------  
+00002000                             7  START       ORG     $2000
+00002000                             8  
+00002000                             9  *-----------------------------------------------------------
+00002000                            10  * Initialize loop and places op codes inside the memory
+00002000                            11  * for testing
+00002000                            12  *-----------------------------------------------------------
+00002000                            13  TESTINGCODES
+00002000  343C 2000                 14              MOVE.W  #$2000,D2
+00002004  363C 2040                 15              MOVE.W  #$2040,D3
+00002008  31FC 4E75 2000            16              MOVE.W  #$4E75,$2000    *RTS
+0000200E  31FC 4E71 2002            17              MOVE.W  #$4E71,$2002    *NOP
+00002014  31FC 4E90 2004            18              MOVE.W  #$4E90,$2004   *JSR   (A0)
+0000201A  31FC E30A 2006            19              MOVE.W  #$E30A,$2006    *LSL.B #$1,D2
+00002020                            20              
+00002020  31FC E3D1 2008            21              MOVE.W  #$E3D1,$2008    *LSL.W (A1)
+00002026  31FC E3AA 200A            22              MOVE.W  #$E3AA,$200A    *LSL.L D1,D2
+0000202C  31FC E222 200C            23              MOVE.W  #$E222,$200C    *ASR.B D1,D2
+00002032  31FC E3D9 200E            24              MOVE.W  #$E3D9,$200E    *LSL.W (A1)+
+00002038  31FC E2D1 2010            25              MOVE.W  #$E2D1,$2010    *LSR.W  (A1)
+0000203E  31FC E22A 2012            26              MOVE.W  #$E22A,$2012    *LSR.B D1,D2
+00002044  31FC E1D9 2014            27              MOVE.W  #$E1D9,$2014    *ASL.W (A1)+
+0000204A  31FC E362 2016            28              MOVE.W  #$E362,$2016    *ASL.W D1,D2
+00002050  31FC 4601 2018            29              MOVE.W  #$4601,$2018    *NOT.B D1
+00002056  31FC 60FE 201A            30              MOVE.W  #$60FE,$201A    *BRA TESTINGCODES
+0000205C  31FC 6E00 201C            31              MOVE.W  #$6E00,$201C    *BGT
+00002062  31FC 6F00 201E            32              MOVE.W  #$6F00,$201E    *BLE
+00002068  31FC 6700 2020            33              MOVE.W  #$6700,$2020    *BEQ
+0000206E  31FC E7D2 2022            34              MOVE.W  #$E7D2,$2022    *ROL.W (A2)
+00002074  31FC E6D2 2024            35              MOVE.W  #$E6D2,$2024    *ROR.W (A2)
+0000207A  31FC E91C 2026            36              MOVE.W  #$E91C,$2026    *ROL.B  #$4,D4
+00002080  31FC E81C 2028            37              MOVE.W  #$E81C,$2028    *ROR.B  #$4,D4
+00002086  31FC 1200 202A            38              MOVE.W  #$1200,$202A    *MOVE.B D0,D1
+0000208C  31FC D359 202C            39              MOVE.W  #$D359,$202C    *ADD.W  D1,(A1)+
+00002092  31FC 70FF 202E            40              MOVE.W  #$70FF,$202E    *MOVEQ  #$FF,D0
+00002098  31FC 5A03 2030            41              MOVE.W  #$5A03,$2030    *ADDQ.B  #$5,D3
+0000209E                            42              
+0000209E  47F8 2030                 43              LEA     $2030,A3
+000020A2  36FC 9401                 44              MOVE.W  #$9401,(A3)+    *SUB.B  D1,D2
+000020A6  36FC 41F8                 45              MOVE.W  #$41F8,(A3)+    *LEA   $1234,A0 tbc
+000020AA  36FC 1234                 46              MOVE.W  #$1234,(A3)+
+000020AE  36FC 8319                 47              MOVE.W  #$8319,(A3)+    *OR.B   D1,(A1)+  
+000020B2  36FC C351                 48              MOVE.W  #$C351,(A3)+    *AND.W  D1,(A1)
+000020B6  36FC 3050                 49              MOVE.W  #$3050,(A3)+    *MOVEA.W    (A0),A0
+000020BA  36FC D4D9                 50              MOVE.W  #$D4D9,(A3)+    *ADDA.W (A1)+,A2
+000020BE  36FC FFCA                 51              MOVE.W  #$FFCA,(A3)+    *RANDOM
+000020C2  23C2 0000280A             52              MOVE.L  D2,BEGIN
+000020C8  23C3 0000280E             53              MOVE.L  D3,FIN
+000020CE  2479 0000280A             54              MOVEA.L BEGIN,A2
+000020D4                            55              *MOVEA.L FIN,A3
+000020D4                            56  
+000020D4                            57  START_PRG
+000020D4  21FC 00000002 0400        58              MOVE.L  #$2, $400
+000020DC  21FC 00000004 0410        59              MOVE.L  #$4, $410 
+000020E4  4240                      60              CLR     D0
+000020E6  4241                      61              CLR     D1
+000020E8  4242                      62              CLR     D2
+000020EA  4243                      63              CLR     D3
+000020EC  4244                      64              CLR     D4
+000020EE  4245                      65              CLR     D5         
+000020F0  43F9 000026DE             66              LEA     DIRECTIONS,A1   * Loads first address prompt into A1
+000020F6  103C 000E                 67              MOVE.B  #14,D0          * Move 14 in D0 to prompt user
+000020FA  4E4F                      68              TRAP    #15             * Prompt user
+000020FC                            69              
+000020FC                            70               
+000020FC  43F9 0000271A             71              LEA     PROMPT1,A1      * Loads first address prompt into A1
+00002102  103C 000E                 72              MOVE.B  #14,D0          * Move 14 in D0 to prompt user
+00002106  4E4F                      73              TRAP    #15             * Prompt user
+00002108                            74     
+00002108                            75              *SUBA.L  A1,A1           *need to clear A1 to make sure PROMPT1 variable is not changed
+00002108  103C 0002                 76              MOVE.B  #2,D0           * Move 2 into D0
+0000210C  4E4F                      77              TRAP    #15             * Read input from user and store it in A1
+0000210E                            78              
+0000210E  2049                      79              MOVEA.L A1,A0           * Move our first number recieved into A0
+00002110                            80              
+00002110  43F9 00002732             81              LEA     PROMPT2,A1      * Loads second address prompt into A1
+00002116  103C 000E                 82              MOVE.B  #14,D0          * Move 14 in D0 to prompt user
+0000211A  4E4F                      83              TRAP    #15             * Prompt user
+0000211C                            84              
+0000211C  103C 0002                 85              MOVE.B  #2,D0           * Move 2 into D0
+00002120  4E4F                      86              TRAP    #15             * Read input from user and store it in A1
+00002122                            87              
+00002122                            88              
+00002122  183C 0000                 89              MOVE.B  #0,D4
+00002126  1A3C 0006                 90              MOVE.B  #6,D5
+0000212A                            91  
+0000212A                            92  * -----------Convert Ascii into Hex  (1st Address)-----------
+0000212A                            93  CONVERTHEX1        
+0000212A  4241                      94              CLR     D1              * Clear regiters to prepare for conversion
+0000212C  BA04                      95              CMP.B   D4,D5           * Check counter in D4 and D5, if counter = 4 we stop
+0000212E  6700 002C                 96              BEQ     INITHEX2
+00002132                            97              
+00002132  1218                      98              MOVE.B  (A0)+,D1        * Move our ascii byte into D1
+00002134  0C01 0040                 99              CMPI.B  #$40,D1         * Compare to 40 (if <40 = number OR if   >40 = character)
+00002138  6D00 0006                100              BLT     NUMBER1         * If < then convert as number
+0000213C  6000 000A                101              BRA     CHARACTER1      * Always branch to character since we know its not a number
+00002140                           102              
+00002140                           103  NUMBER1     
+00002140  0401 0030                104              SUB.B   #$30,D1         * Subtract 30 from the ascii value to get hex value
+00002144  6000 0006                105              BRA     COMBINE1        * Branch to figure out next number
+00002148                           106              
+00002148                           107  CHARACTER1   
+00002148  0401 0037                108              SUB.B   #$37,D1         * Subtract 37 from the ascii value to get hex value
+0000214C                           109              
+0000214C                           110  COMBINE1     
+0000214C  D401                     111              ADD.B  D1,D2            * Add D1 and D2 together (combines our hex value
+0000214E                           112              
+0000214E  0C04 0005                113              CMPI.B  #5,D4           * Compare our counter to 3 if here we dont need to shift our final hex number
+00002152  6700 0008                114              BEQ     INITHEX2        * And we go ahead and branch
+00002156                           115              
+00002156  E98A                     116              LSL.L   #4,D2           * Shift D2 (our hex number) by 8 to make room for rest of hex number conversion
+00002158                           117              
+00002158  5204                     118              ADD.B   #1,D4           * Add 1 to our counter in D4
+0000215A  60CE                     119              BRA     CONVERTHEX1     * Loop back up
+0000215C                           120            
+0000215C                           121              * D1,D2 used. D1 = temp, D2 = holds first starting address
+0000215C                           122              * D4,D5 = counters
+0000215C                           123  INITHEX2
+0000215C  183C 0000                124              MOVE.B  #0,D4
+00002160  1A3C 0006                125              MOVE.B  #6,D5
+00002164                           126  
+00002164                           127  CONVERTHEX2
+00002164  4241                     128              CLR     D1              * Clear regiters to prepare for conversion
+00002166  BA04                     129              CMP.B   D4,D5           * Check counter in D4 and D5, if counter = 4 we stop
+00002168  6700 002C                130              BEQ     CHECK
+0000216C                           131              
+0000216C  1219                     132              MOVE.B  (A1)+,D1        * Move our ascii byte into D1
+0000216E  0C01 0040                133              CMPI.B  #$40,D1         * Compare to 40 (if <40 = number OR if   >40 = character)
+00002172  6D00 0006                134              BLT     NUMBER2         * If < then convert as number
+00002176  6000 000A                135              BRA     CHARACTER2      * Always branch to character since we know its not a number
+0000217A                           136              
+0000217A                           137  NUMBER2     
+0000217A  0401 0030                138              SUB.B   #$30,D1         * Subtract 30 from the ascii value to get hex value
+0000217E  6000 0006                139              BRA     COMBINE2        * Branch to figure out next number
+00002182                           140              
+00002182                           141  CHARACTER2   
+00002182  0401 0037                142              SUB.B   #$37,D1         * Subtract 37 from the ascii value to get hex value
+00002186                           143              
+00002186                           144  COMBINE2     
+00002186  D601                     145              ADD.B  D1,D3            * Add D1 and D2 together (combines our hex value
+00002188                           146              
+00002188  0C04 0005                147              CMPI.B  #5,D4           * Compare our counter to 3 if here we dont need to shift our final hex number
+0000218C  6700 0008                148              BEQ     CHECK            * And we go ahead and branch
+00002190                           149              
+00002190  E98B                     150              LSL.L   #4,D3           * Shift D2 (our hex number) by 8 to make room for rest of hex number conversion
+00002192                           151              
+00002192  5204                     152              ADD.B   #1,D4           * Add 1 to our counter in D4
+00002194  60CE                     153              BRA     CONVERTHEX2     * Loop back up
+00002196                           154            
+00002196                           155              * D1,D3 used. D1 = temp, D3 = holds ENDING address
+00002196                           156              * D4,D5 = counters
+00002196                           157              
+00002196                           158  *Input Checking
+00002196                           159  CHECK
+00002196  B682                     160              CMP.L   D2,D3
+00002198  6D00 FF3A                161              BLT     START_PRG
+0000219C                           162                   
+0000219C                           163  *------INIT MEM LOOP-------  
+0000219C                           164  DONE            
+0000219C  23C2 0000280A            165              MOVE.L  D2,BEGIN        *put adsresses in variable in order to put in addr register
+000021A2  23C3 0000280E            166              MOVE.L  D3,FIN
+000021A8  2479 0000280A            167              MOVEA.L  BEGIN,A2       *Move to address registers
+000021AE  2679 0000280E            168              MOVEA.L  FIN,A3            
+000021B4                           169  
+000021B4                           170              
+000021B4                           171  MAIN_LOOP
+000021B4  B5CB                     172              CMPA.L  A3,A2           * Check are we done
+000021B6  6C00 0522                173              BGE     END             
+000021BA  3E1A                     174              MOVE.W  (A2)+,D7
+000021BC                           175              *MOVE.W  #8,D3
+000021BC                           176              *LSL.L   D3,D7
+000021BC                           177              *MOVE.B (A2)+,D7
+000021BC  BE7C 4E75                178              CMP.W   #$4E75,D7       * Check if RTS instruction
+000021C0  6700 015E                179              BEQ     MATCH_RTS
+000021C4                           180              
+000021C4  BE7C 4E71                181              CMP.W   #$4E71,D7       * Check if NOP instruction
+000021C8  6700 0170                182              BEQ     MATCH_NOP
+000021CC                           183              
+000021CC  EC4F                     184              LSR.W   #6,D7           * Shift to get only 10 digits
+000021CE  BE7C 013A                185              CMP.W   #$013A,D7       * Check if it is a JSR instruction
+000021D2  6700 0180                186              BEQ     MATCH_JSR
+000021D6                           187              
+000021D6  BE7C 039B                188              CMP.W   #%1110011011,D7 * Check if rotate right memory 
+000021DA  6700 0192                189              BEQ     MATCH_MEMROR
+000021DE                           190              
+000021DE  BE7C 039F                191              CMP.W   #%1110011111,D7 * Check if rotate left memory
+000021E2  6700 01A4                192              BEQ     MATCH_MEMROL
+000021E6                           193              
+000021E6                           194              
+000021E6  BE7C 038B                195              CMP.W   #$38B,D7        * Check if right logical memory shift (had to break up becasue instruction format difference)
+000021EA  6700 01B8                196              BEQ     MATCH_MEMLSHIFTR
+000021EE                           197              
+000021EE  BE7C 038F                198              CMP.W   #$38F,D7        * Check if left logical memory shift
+000021F2  6700 01CC                199              BEQ     MATCH_MEMLSHIFTL
+000021F6                           200              
+000021F6  BE7C 0383                201              CMP.W   #%1110000011,D7 * Check if right arithmatic memory shift (had to break up becasue instruction format diff)
+000021FA  6700 01E0                202              BEQ     MATCH_MEMASHIFTR
+000021FE                           203              
+000021FE  BE7C 0387                204              CMP.W   #%1110000111,D7 * Check if left arithmatic memory shift
+00002202  6700 01F4                205              BEQ     MATCH_MEMASHIFTL
+00002206                           206              
+00002206  E44F                     207              LSR.W   #2,D7           * Shift 2 bits to see 8 bits total
+00002208  BE7C 0046                208              CMP.W   #$46,D7         * Check if NOT instruction
+0000220C  6700 0206                209              BEQ     MATCH_NOT
+00002210                           210              
+00002210  BE7C 0060                211              CMP.W   #$60,D7         * Check if BRA instruction
+00002214  6700 021A                212              BEQ     MATCH_BRA
+00002218                           213              
+00002218  E84F                     214              LSR.W   #4,D7           * Shift more to see 4 bits total and if we match a normal register logical/arithmetic shift
+0000221A  BE3C 000E                215              CMP.B   #$0E,D7
+0000221E  6700 022C                216              BEQ     MATCH_SHIFT
+00002222                           217              
+00002222  BE3C 0007                218              CMP.B   #$7,D7
+00002226  6700 030A                219              BEQ     MATCH_MOVEQ
+0000222A                           220              
+0000222A  BE3C 000D                221              CMP.B   #$D,D7
+0000222E  6700 031E                222              BEQ     MATCH_ADD
+00002232                           223              
+00002232  BE3C 0005                224              CMP.B   #$5,D7
+00002236  6700 0362                225              BEQ     MATCH_ADDQ
+0000223A                           226              
+0000223A  BE3C 0009                227              CMP.B   #$9,D7
+0000223E  6700 0376                228              BEQ     MATCH_SUB
+00002242                           229              
+00002242  BE3C 000C                230              CMP.B   #$C,D7
+00002246  6700 03A6                231              BEQ     MATCH_AND
+0000224A                           232              
+0000224A  BE3C 0004                233              CMP.B   #$4,D7
+0000224E  6700 0382                234              BEQ     MATCH_LEA
+00002252                           235              
+00002252  BE3C 0008                236              CMP.B   #$8,D7
+00002256  6700 03B2                237              BEQ     MATCH_OR
+0000225A                           238              
+0000225A  BE3C 0006                239              CMP.B   #$06,D7         * Check if any of Branch Instructions
+0000225E  6700 03C6                240              BEQ     MATCH_BCC
+00002262                           241              
+00002262  E44F                     242              LSR.W   #2,D7           *shift more to see 2 bits total
+00002264  BE3C 0000                243              CMP.B   #$0,D7
+00002268  6700 042C                244              BEQ     MATCH_MOVE
+0000226C                           245              
+0000226C                           246  NOOP                                * NOOP opcode not found in current memory being read
+0000226C  220A                     247              MOVE.L  A2,D1           * current memory being read that did not dissemble to readable opcode from specs
+0000226E  143C 0010                248              MOVE.B  #16,D2      
+00002272  103C 000F                249              MOVE.B  #15,D0
+00002276  4E4F                     250              TRAP    #15             * output current memory address word
+00002278                           251      
+00002278  43F9 00002757            252              LEA     UNKNOWN,A1      * move constant DATA to A1
+0000227E  103C 000E                253              MOVE.B  #14,D0          * prepare to print string in (A1)
+00002282  4E4F                     254              TRAP    #15             * display string in (A1)
+00002284                           255              
+00002284  43F9 00002761            256              LEA     SPACE,A1        
+0000228A  4E4F                     257              TRAP    #15
+0000228C                           258      
+0000228C  143C 0010                259              MOVE.B  #16,D2          * prepare to print number in D1 in base 16
+00002290  4281                     260              CLR.L   D1
+00002292  384A                     261              MOVEA.W A2,A4           * move the current address to A4 to be printed
+00002294  4285                     262              CLR.L   D5              * D5 to keep track of nibble program is reading   
+00002296  121C                     263              MOVE.B  (A4)+,D1        * prepare value at address  A4 to be printed
+00002298  1601                     264              MOVE.B  D1,D3
+0000229A  E80B                     265              LSR.B   #4,D3           * get left nibble of first byte
+0000229C  0C03 0000                266              CMPI.B  #$00,D3         * left nibble == 0?
+000022A0  6700 0026                267              BEQ     PRINT0_B1
+000022A4  103C 000F                268              MOVE.B  #15,D0      
+000022A8  4E4F                     269              TRAP    #15             * print first byte
+000022AA  5405                     270              ADDI.B  #2,D5           * we have printed one byte (2 nibbles)
+000022AC  548A                     271              ADDA.L  #$2,A2          * Increase counter by long
+000022AE                           272      
+000022AE                           273  OUTPUT     
+000022AE  1214                     274              MOVE.B  (A4),D1         * move second byte to D1 
+000022B0  1601                     275              MOVE.B  D1,D3       
+000022B2  E80B                     276              LSR.B   #4,D3           * get left most nibble of D1
+000022B4  0C03 0000                277              CMPI.B  #$00,D3         * is leftmost nibble == 0?
+000022B8  6700 000E                278              BEQ     PRINT0_B1
+000022BC  5405                     279              ADDI.B  #2,D5       
+000022BE  103C 000F                280              MOVE.B  #15,D0
+000022C2  4E4F                     281              TRAP    #15             * print out second byte
+000022C4                           282      
+000022C4  6000 0048                283              BRA     INCREMENT
+000022C8                           284      
+000022C8                           285  PRINT0_B1                           * print 0 to output window for first byte, only get here if first byte is 0
+000022C8  5205                     286              ADDI.B  #1,D5
+000022CA  43F9 0000275F            287              LEA     ZERO,A1         * load zero to A1 to be printed
+000022D0  103C 000E                288              MOVE.B  #14,D0
+000022D4  4E4F                     289              TRAP    #15             * print 0 in A1
+000022D6  1601                     290              MOVE.B  D1,D3
+000022D8  E90B                     291              LSL.B   #4,D3   
+000022DA  E80B                     292              LSR.B   #4,D3           *get value of right most nibble of byte in D1
+000022DC  0C03 0000                293              CMPI.B  #$00,D3         *is right most nibble == 0?
+000022E0  6700 0014                294              BEQ     PRINT0_B2
+000022E4  5205                     295              ADDI.B  #1,D5   
+000022E6  103C 000F                296              MOVE.B  #15,D0
+000022EA  4E4F                     297              TRAP    #15             *print out right most nibble of byte which left most nibble is 0
+000022EC  0C05 0004                298              CMPI.B  #4,D5           *have we read 4 nibbles? (2 bytes)
+000022F0  6C00 001C                299              BGE     INCREMENT       *have read 4 nibbles
+000022F4  60B8                     300              BRA     OUTPUT          *havent read 4 nibbles
+000022F6                           301      
+000022F6                           302  PRINT0_B2                 *print 0 to output window for second byte
+000022F6  5205                     303              ADDI.B  #1,D5
+000022F8  43F9 0000275F            304              LEA     ZERO,A1     *load zero to A1 to be printed
+000022FE  103C 000E                305              MOVE.B  #14,D0
+00002302  4E4F                     306              TRAP    #15         *print out 0 for right most nibble
+00002304  0C05 0004                307              CMPI.B  #4,D5       * have we read 4 nibbles ? (2 bytes)
+00002308  6C00 0004                308              BGE     INCREMENT   *have read 4 nibbles
+0000230C  60A0                     309              BRA     OUTPUT      *have not read 4 nibbles
+0000230E                           310      
+0000230E                           311  INCREMENT                           * Increment the loop and continue reading opcodes        
+0000230E  548A                     312              ADDA.L  #$2,A2          * Increase counter by long
+00002310                           313              
+00002310  43F9 00002805            314              LEA     BLANK,A1        * PRINT BLANK LINE to prepare for next line
+00002316  103C 000E                315              MOVE.B  #14,D0
+0000231A  4E4F                     316              TRAP    #15
+0000231C                           317  
+0000231C  6000 FE96                318              BRA     MAIN_LOOP       * Branch back up to main loop
+00002320                           319              
+00002320                           320  *-----------------------------------------------------------
+00002320                           321  * Test to see if we have a matching RTS op code. If so
+00002320                           322  * print out the memory address and the op code.
+00002320                           323  *-----------------------------------------------------------
+00002320                           324  MATCH_RTS
+00002320  220A                     325              MOVE.L  A2,D1
+00002322  143C 0010                326              MOVE.B  #16,D2
+00002326  103C 000F                327              MOVE.B  #15,D0
+0000232A  4E4F                     328              TRAP    #15
+0000232C                           329              
+0000232C  43F9 00002749            330              LEA     MSG_RTS,A1
+00002332  103C 000E                331              MOVE.B  #14,D0
+00002336  4E4F                     332              TRAP    #15
+00002338  60D4                     333              BRA     INCREMENT
+0000233A                           334              
+0000233A                           335  *-----------------------------------------------------------
+0000233A                           336  * Test to see if we have a matching NOP op code. If so
+0000233A                           337  * print out the memory address and the op code.
+0000233A                           338  *-----------------------------------------------------------
+0000233A                           339  MATCH_NOP
+0000233A  220A                     340              MOVE.L  A2,D1
+0000233C  143C 0010                341              MOVE.B  #16,D2
+00002340  103C 000F                342              MOVE.B  #15,D0
+00002344  4E4F                     343              TRAP    #15
+00002346                           344              
+00002346  43F9 000027B2            345              LEA     MSG_NOP,A1
+0000234C  103C 000E                346              MOVE.B  #14,D0
+00002350  4E4F                     347              TRAP    #15
+00002352  60BA                     348              BRA     INCREMENT
+00002354                           349   
+00002354                           350  *-----------------------------------------------------------
+00002354                           351  * Test to see if we have a matching JSR op code. If so
+00002354                           352  * print out the memory address and the op code.
+00002354                           353  *-----------------------------------------------------------            
+00002354                           354  MATCH_JSR
+00002354  220A                     355              MOVE.L  A2,D1
+00002356  143C 0010                356              MOVE.B  #16,D2
+0000235A  103C 000F                357              MOVE.B  #15,D0
+0000235E  4E4F                     358              TRAP    #15
+00002360                           359              
+00002360  43F9 00002750            360              LEA     MSG_JSR,A1
+00002366  103C 000E                361              MOVE.B  #14,D0
+0000236A  4E4F                     362              TRAP    #15
+0000236C  60A0                     363              BRA     INCREMENT
+0000236E                           364              
+0000236E                           365              
+0000236E                           366  *-----------------------------------------------------------
+0000236E                           367  * Test to see if we have a matching Memory Shift ROR op code. 
+0000236E                           368  * If so print out the memory address and the op code.
+0000236E                           369  *-----------------------------------------------------------            
+0000236E                           370  MATCH_MEMROR
+0000236E  220A                     371              MOVE.L  A2,D1
+00002370  143C 0010                372              MOVE.B  #16,D2
+00002374  103C 000F                373              MOVE.B  #15,D0
+00002378  4E4F                     374              TRAP    #15
+0000237A                           375              
+0000237A  43F9 000027A4            376              LEA     MSG_ROR,A1
+00002380  103C 000E                377              MOVE.B  #14,D0
+00002384  4E4F                     378              TRAP    #15
+00002386  6086                     379              BRA     INCREMENT
+00002388                           380  
+00002388                           381  *-----------------------------------------------------------
+00002388                           382  * Test to see if we have a matching Memory Shift ROL op code. 
+00002388                           383  * If so print out the memory address and the op code.
+00002388                           384  *-----------------------------------------------------------            
+00002388                           385  MATCH_MEMROL
+00002388  220A                     386              MOVE.L  A2,D1
+0000238A  143C 0010                387              MOVE.B  #16,D2
+0000238E  103C 000F                388              MOVE.B  #15,D0
+00002392  4E4F                     389              TRAP    #15
+00002394                           390              
+00002394  43F9 000027AB            391              LEA     MSG_ROL,A1
+0000239A  103C 000E                392              MOVE.B  #14,D0
+0000239E  4E4F                     393              TRAP    #15
+000023A0  6000 FF6C                394              BRA     INCREMENT
+000023A4                           395         
+000023A4                           396  
+000023A4                           397  *-----------------------------------------------------------
+000023A4                           398  * Test to see if we have a matching Memory Shift LSR op code. 
+000023A4                           399  * If so print out the memory address and the op code.
+000023A4                           400  *-----------------------------------------------------------
+000023A4                           401  MATCH_MEMLSHIFTR  
+000023A4  220A                     402              MOVE.L  A2,D1 
+000023A6  143C 0010                403              MOVE.B  #16,D2
+000023AA  103C 000F                404              MOVE.B  #15,D0
+000023AE  4E4F                     405              TRAP    #15
+000023B0                           406              
+000023B0  43F9 0000276C            407              LEA     MSG_LSR,A1
+000023B6  103C 000E                408              MOVE.B  #14,D0
+000023BA  4E4F                     409              TRAP    #15
+000023BC  6000 FF50                410              BRA     INCREMENT
+000023C0                           411              
+000023C0                           412  *-----------------------------------------------------------
+000023C0                           413  * Test to see if we have a matching Memory Shift LSL op code. 
+000023C0                           414  * If so print out the memory address and the op code.
+000023C0                           415  *-----------------------------------------------------------            
+000023C0                           416  MATCH_MEMLSHIFTL
+000023C0  220A                     417              MOVE.L  A2,D1
+000023C2  143C 0010                418              MOVE.B  #16,D2
+000023C6  103C 000F                419              MOVE.B  #15,D0
+000023CA  4E4F                     420              TRAP    #15
+000023CC                           421              
+000023CC  43F9 00002765            422              LEA     MSG_LSL,A1
+000023D2  103C 000E                423              MOVE.B  #14,D0
+000023D6  4E4F                     424              TRAP    #15
+000023D8  6000 FF34                425              BRA     INCREMENT
+000023DC                           426              
+000023DC                           427  *-----------------------------------------------------------
+000023DC                           428  * Test to see if we have a matching Memory Shift ASR op code. 
+000023DC                           429  * If so print out the memory address and the op code.
+000023DC                           430  *-----------------------------------------------------------            
+000023DC                           431  MATCH_MEMASHIFTR
+000023DC  220A                     432              MOVE.L  A2,D1
+000023DE  143C 0010                433              MOVE.B  #16,D2
+000023E2  103C 000F                434              MOVE.B  #15,D0
+000023E6  4E4F                     435              TRAP    #15
+000023E8                           436              
+000023E8  43F9 0000277A            437              LEA     MSG_ASR,A1
+000023EE  103C 000E                438              MOVE.B  #14,D0
+000023F2  4E4F                     439              TRAP    #15
+000023F4  6000 FF18                440              BRA     INCREMENT
+000023F8                           441  
+000023F8                           442  *-----------------------------------------------------------
+000023F8                           443  * Test to see if we have a matching Memory Shift ASL op code. 
+000023F8                           444  * If so print out the memory address and the op code.
+000023F8                           445  *-----------------------------------------------------------
+000023F8                           446  MATCH_MEMASHIFTL
+000023F8  220A                     447              MOVE.L  A2,D1
+000023FA  143C 0010                448              MOVE.B  #16,D2
+000023FE  103C 000F                449              MOVE.B  #15,D0
+00002402  4E4F                     450              TRAP    #15
+00002404                           451              
+00002404  43F9 00002773            452              LEA     MSG_ASL,A1
+0000240A  103C 000E                453              MOVE.B  #14,D0
+0000240E  4E4F                     454              TRAP    #15
+00002410  6000 FEFC                455              BRA     INCREMENT
+00002414                           456              
+00002414                           457  *-----------------------------------------------------------
+00002414                           458  * Test to see if we have a matching NOT op code. If so
+00002414                           459  * print out the memory address and the op code.
+00002414                           460  *-----------------------------------------------------------
+00002414                           461  MATCH_NOT
+00002414  220A                     462              MOVE.L  A2,D1
+00002416  143C 0010                463              MOVE.B  #16,D2
+0000241A  103C 000F                464              MOVE.B  #15,D0
+0000241E  4E4F                     465              TRAP    #15
+00002420                           466              
+00002420  43F9 00002781            467              LEA     MSG_NOT,A1
+00002426  103C 000E                468              MOVE.B  #14,D0
+0000242A  4E4F                     469              TRAP    #15
+0000242C  6000 FEE0                470              BRA     INCREMENT
+00002430                           471              
+00002430                           472              
+00002430                           473  *-----------------------------------------------------------
+00002430                           474  * Test to see if we have a matching BRA op code. If so
+00002430                           475  * print out the memory address and the op code.
+00002430                           476  *-----------------------------------------------------------
+00002430                           477  MATCH_BRA
+00002430  220A                     478              MOVE.L  A2,D1
+00002432  143C 0010                479              MOVE.B  #16,D2
+00002436  103C 000F                480              MOVE.B  #15,D0
+0000243A  4E4F                     481              TRAP    #15
+0000243C                           482              
+0000243C  43F9 00002788            483              LEA     MSG_BRA,A1
+00002442  103C 000E                484              MOVE.B  #14,D0
+00002446  4E4F                     485              TRAP    #15
+00002448  6000 FEC4                486              BRA     INCREMENT
+0000244C                           487                      
+0000244C                           488              
+0000244C                           489  *-----------------------------------------------------------
+0000244C                           490  * Test to see if we have a matching logical, arthemetic, or rotate
+0000244C                           491  * shift. (Register shift)
+0000244C                           492  *-----------------------------------------------------------
+0000244C                           493  MATCH_SHIFT
+0000244C  3E12                     494              MOVE.W  (A2),D7         *Get full instruction again to figure out the type of shift or rotate
+0000244E  E64F                     495              LSR.W   #3,D7          
+00002450                           496              
+00002450  CE7C 0003                497              AND.W   #$0003,D7
+00002454                           498              
+00002454  BE3C 0003                499              CMP.B   #$03,D7
+00002458  6700 0012                500              BEQ     ROTATE
+0000245C                           501              
+0000245C  BE3C 0001                502              CMP.B   #$01,D7
+00002460  6700 004C                503              BEQ     LSHIFT
+00002464                           504              
+00002464  BE3C 0000                505              CMP.B   #$00,D7
+00002468  6700 0086                506              BEQ     ASHIFT
+0000246C                           507              *BTST.L  #$03,D7
+0000246C                           508              *BEQ     ASHIFT
+0000246C                           509              *BRA     LSHIFT
+0000246C                           510              
+0000246C                           511  *-----------------------------------------------------------
+0000246C                           512  * We have a rotate instruction.Check to see if left or right.
+0000246C                           513  *-----------------------------------------------------------
+0000246C                           514  ROTATE
+0000246C  3E12                     515              MOVE.W  (A2),D7
+0000246E  0807 0008                516              BTST.L  #$8,D7          * Check if left or right direction (8th bit gets tested)
+00002472  6600 001E                517              BNE     RL
+00002476                           518              
+00002476  220A                     519              MOVE.L  A2,D1           * Must be a right logical shift so dont branch
+00002478  143C 0010                520              MOVE.B  #16,D2
+0000247C  103C 000F                521              MOVE.B  #15,D0
+00002480  4E4F                     522              TRAP    #15
+00002482                           523              
+00002482  43F9 000027A4            524              LEA     MSG_ROR,A1
+00002488  103C 000E                525              MOVE.B  #14,D0
+0000248C  4E4F                     526              TRAP    #15
+0000248E  6000 FE7E                527              BRA     INCREMENT
+00002492                           528  
+00002492                           529  * Rotate Left
+00002492                           530  RL
+00002492  220A                     531              MOVE.L  A2,D1
+00002494  143C 0010                532              MOVE.B  #16,D2
+00002498  103C 000F                533              MOVE.B  #15,D0
+0000249C  4E4F                     534              TRAP    #15
+0000249E                           535              
+0000249E  43F9 000027AB            536              LEA     MSG_ROL,A1
+000024A4  103C 000E                537              MOVE.B  #14,D0
+000024A8  4E4F                     538              TRAP    #15
+000024AA  6000 FE62                539              BRA     INCREMENT
+000024AE                           540  *-----------------------------------------------------------
+000024AE                           541  * We have a logical register shift. Check to see if its 
+000024AE                           542  * left or right.
+000024AE                           543  *-----------------------------------------------------------
+000024AE                           544  LSHIFT
+000024AE  3E12                     545              MOVE.W  (A2),D7
+000024B0  0807 0008                546              BTST.L  #$8,D7          * Check if left or right direction (8th bit gets tested)
+000024B4  6600 001E                547              BNE     LL
+000024B8                           548              
+000024B8  220A                     549              MOVE.L  A2,D1           * Must be a right logical shift so dont branch
+000024BA  143C 0010                550              MOVE.B  #16,D2
+000024BE  103C 000F                551              MOVE.B  #15,D0
+000024C2  4E4F                     552              TRAP    #15
+000024C4                           553              
+000024C4  43F9 0000276C            554              LEA     MSG_LSR,A1
+000024CA  103C 000E                555              MOVE.B  #14,D0
+000024CE  4E4F                     556              TRAP    #15
+000024D0  6000 FE3C                557              BRA     INCREMENT
+000024D4                           558  
+000024D4                           559  * Logical Left Shift            
+000024D4                           560  LL
+000024D4  220A                     561              MOVE.L  A2,D1
+000024D6  143C 0010                562              MOVE.B  #16,D2
+000024DA  103C 000F                563              MOVE.B  #15,D0
+000024DE  4E4F                     564              TRAP    #15
+000024E0                           565              
+000024E0  43F9 00002765            566              LEA     MSG_LSL,A1
+000024E6  103C 000E                567              MOVE.B  #14,D0
+000024EA  4E4F                     568              TRAP    #15
+000024EC  6000 FE20                569              BRA     INCREMENT
+000024F0                           570              
+000024F0                           571  *-----------------------------------------------------------
+000024F0                           572  * We have a arithmetic register shift. Check to see if its 
+000024F0                           573  * left or right.
+000024F0                           574  *-----------------------------------------------------------    
+000024F0                           575  ASHIFT
+000024F0  3E12                     576              MOVE.W  (A2),D7
+000024F2  0807 0008                577              BTST.L  #$8,D7          * Check if left or right direction (8th bit gets tested)
+000024F6  6600 001E                578              BNE     AL
+000024FA                           579  
+000024FA  220A                     580              MOVE.L  A2,D1           * Must be a right arithmetic shift so dont branch
+000024FC  143C 0010                581              MOVE.B  #16,D2
+00002500  103C 000F                582              MOVE.B  #15,D0
+00002504  4E4F                     583              TRAP    #15
+00002506                           584              
+00002506  43F9 0000277A            585              LEA     MSG_ASR,A1
+0000250C  103C 000E                586              MOVE.B  #14,D0
+00002510  4E4F                     587              TRAP    #15
+00002512  6000 FDFA                588              BRA     INCREMENT
+00002516                           589              
+00002516                           590  * Arithmetic Left Shift            
+00002516                           591  AL
+00002516  220A                     592              MOVE.L  A2,D1
+00002518  143C 0010                593              MOVE.B  #16,D2
+0000251C  103C 000F                594              MOVE.B  #15,D0
+00002520  4E4F                     595              TRAP    #15
+00002522                           596              
+00002522  43F9 00002773            597              LEA     MSG_ASL,A1
+00002528  103C 000E                598              MOVE.B  #14,D0
+0000252C  4E4F                     599              TRAP    #15
+0000252E  6000 FDDE                600              BRA     INCREMENT
+00002532                           601  
+00002532                           602  MATCH_MOVEQ
+00002532  220A                     603              MOVE.L  A2,D1
+00002534  143C 0010                604              MOVE.B  #16,D2
+00002538  103C 000F                605              MOVE.B  #15,D0
+0000253C  4E4F                     606              TRAP    #15
+0000253E                           607              
+0000253E  43F9 000027B9            608              LEA     MSG_MOVEQ,A1
+00002544  103C 000E                609              MOVE.B  #14,D0
+00002548  4E4F                     610              TRAP    #15
+0000254A  6000 FDC2                611              BRA     INCREMENT
+0000254E                           612              
+0000254E                           613  MATCH_ADD
+0000254E  3E12                     614              MOVE.W  (A2),D7
+00002550  EC0F                     615              LSR.B   #6,D7       *shift value in D7 to the right by 6 bits
+00002552  0C07 0003                616              CMPI.B  #$3,D7     *check if opcode is $3 if so it is ADDA
+00002556  6700 0026                617              BEQ     MATCH_ADDA
+0000255A  0C07 0007                618              CMPI.B   #$7,D7     *check if opcode is $7 if so it is ADDA
+0000255E  6700 001E                619              BEQ     MATCH_ADDA
+00002562                           620              
+00002562  220A                     621              MOVE.L  A2,D1
+00002564  143C 0010                622              MOVE.B  #16,D2
+00002568  103C 000F                623              MOVE.B  #15,D0
+0000256C  4E4F                     624              TRAP    #15
+0000256E                           625              
+0000256E  43F9 000027D3            626              LEA     MSG_ADD,A1
+00002574  103C 000E                627              MOVE.B  #14,D0
+00002578  4E4F                     628              TRAP    #15
+0000257A  6000 FD92                629              BRA     INCREMENT
+0000257E                           630  
+0000257E                           631  MATCH_ADDA
+0000257E  220A                     632              MOVE.L  A2,D1
+00002580  143C 0010                633              MOVE.B  #16,D2
+00002584  103C 000F                634              MOVE.B  #15,D0
+00002588  4E4F                     635              TRAP    #15
+0000258A                           636              
+0000258A  43F9 000027DA            637              LEA     MSG_ADDA,A1
+00002590  103C 000E                638              MOVE.B  #14,D0
+00002594  4E4F                     639              TRAP    #15
+00002596  6000 FD76                640              BRA     INCREMENT
+0000259A                           641  MATCH_ADDQ
+0000259A  220A                     642              MOVE.L  A2,D1
+0000259C  143C 0010                643              MOVE.B  #16,D2
+000025A0  103C 000F                644              MOVE.B  #15,D0
+000025A4  4E4F                     645              TRAP    #15
+000025A6                           646              
+000025A6  43F9 000027E2            647              LEA     MSG_ADDQ,A1
+000025AC  103C 000E                648              MOVE.B  #14,D0
+000025B0  4E4F                     649              TRAP    #15
+000025B2  6000 FD5A                650              BRA     INCREMENT
+000025B6                           651  
+000025B6                           652  MATCH_SUB
+000025B6  220A                     653              MOVE.L  A2,D1
+000025B8  143C 0010                654              MOVE.B  #16,D2
+000025BC  103C 000F                655              MOVE.B  #15,D0
+000025C0  4E4F                     656              TRAP    #15
+000025C2                           657              
+000025C2  43F9 000027EA            658              LEA     MSG_SUB,A1
+000025C8  103C 000E                659              MOVE.B  #14,D0
+000025CC  4E4F                     660              TRAP    #15
+000025CE  6000 FD3E                661              BRA     INCREMENT
+000025D2                           662  MATCH_LEA
+000025D2                           663  *looking to branch based on the first 3 bits. if 0 then get next 2 bytes, if 1 then get next 4 bytes 
+000025D2                           664  *rn A2 and A3 are holding sensitive data 
+000025D2                           665  *
+000025D2  220A                     666              MOVE.L  A2,D1
+000025D4  143C 0010                667              MOVE.B  #16,D2
+000025D8  103C 000F                668              MOVE.B  #15,D0
+000025DC  4E4F                     669              TRAP    #15
+000025DE                           670              
+000025DE  43F9 000027F1            671              LEA     MSG_LEA,A1
+000025E4  103C 000E                672              MOVE.B  #14,D0
+000025E8  4E4F                     673              TRAP    #15
+000025EA                           674              
+000025EA                           675              
+000025EA  6000 FD22                676              BRA     INCREMENT
+000025EE                           677  
+000025EE                           678  MATCH_AND  
+000025EE  220A                     679              MOVE.L  A2,D1
+000025F0  143C 0010                680              MOVE.B  #16,D2
+000025F4  103C 000F                681              MOVE.B  #15,D0
+000025F8  4E4F                     682              TRAP    #15
+000025FA                           683              
+000025FA  43F9 000027F8            684              LEA     MSG_AND,A1
+00002600  103C 000E                685              MOVE.B  #14,D0
+00002604  4E4F                     686              TRAP    #15
+00002606  6000 FD06                687              BRA     INCREMENT
+0000260A                           688  MATCH_OR
+0000260A  220A                     689              MOVE.L  A2,D1
+0000260C  143C 0010                690              MOVE.B  #16,D2
+00002610  103C 000F                691              MOVE.B  #15,D0
+00002614  4E4F                     692              TRAP    #15
+00002616                           693              
+00002616  43F9 000027FF            694              LEA     MSG_OR,A1
+0000261C  103C 000E                695              MOVE.B  #14,D0
+00002620  4E4F                     696              TRAP    #15
+00002622  6000 FCEA                697              BRA     INCREMENT            
+00002626                           698  *-----------------------------------------------------------
+00002626                           699  * Test to see if we have a matching Bcc op code. If so
+00002626                           700  * print out the memory address and the op code.
+00002626                           701  *6E = BGT, 6F = BLE, 67=BEQ
+00002626                           702  *-----------------------------------------------------------
+00002626                           703  MATCH_BCC
+00002626  3E12                     704              MOVE.W  (A2),D7
+00002628  E05F                     705              ROR.W   #$8,D7          * Rotate to get condition code. Rotate 2 bytes.
+0000262A                           706                                      * MAKE SURE TO ROTATE BACK IN SEPERATE BRANCHES
+0000262A  BE3C 006E                707              CMP.B   #$6E,D7
+0000262E  6700 0012                708              BEQ     MATCH_BGT
+00002632                           709              
+00002632  BE3C 006F                710              CMP.B   #$6F,D7
+00002636  6700 0026                711              BEQ     MATCH_BLE
+0000263A                           712              
+0000263A  BE3C 0067                713              CMP.B   #$67,D7
+0000263E  6700 003A                714              BEQ     MATCH_BEQ
+00002642                           715  
+00002642                           716  MATCH_BGT
+00002642  220A                     717              MOVE.L  A2,D1
+00002644  143C 0010                718              MOVE.B  #16,D2
+00002648  103C 000F                719              MOVE.B  #15,D0
+0000264C  4E4F                     720              TRAP    #15
+0000264E                           721              
+0000264E  43F9 0000278F            722              LEA     MSG_BGT,A1
+00002654  103C 000E                723              MOVE.B  #14,D0
+00002658  4E4F                     724              TRAP    #15
+0000265A  6000 FCB2                725              BRA     INCREMENT 
+0000265E                           726  
+0000265E                           727  MATCH_BLE
+0000265E  220A                     728              MOVE.L  A2,D1
+00002660  143C 0010                729              MOVE.B  #16,D2
+00002664  103C 000F                730              MOVE.B  #15,D0
+00002668  4E4F                     731              TRAP    #15
+0000266A                           732              
+0000266A  43F9 00002796            733              LEA     MSG_BLE,A1
+00002670  103C 000E                734              MOVE.B  #14,D0
+00002674  4E4F                     735              TRAP    #15
+00002676  6000 FC96                736              BRA     INCREMENT 
+0000267A                           737  
+0000267A                           738  MATCH_BEQ
+0000267A  220A                     739              MOVE.L  A2,D1
+0000267C  143C 0010                740              MOVE.B  #16,D2
+00002680  103C 000F                741              MOVE.B  #15,D0
+00002684  4E4F                     742              TRAP    #15
+00002686                           743              
+00002686  43F9 0000279D            744              LEA     MSG_BEQ,A1
+0000268C  103C 000E                745              MOVE.B  #14,D0
+00002690  4E4F                     746              TRAP    #15
+00002692  6000 FC7A                747              BRA     INCREMENT 
+00002696                           748  
+00002696                           749  MATCH_MOVE
+00002696  3E12                     750              MOVE.W  (A2),D7
+00002698  EC0F                     751              LSR.B   #6,D7       *shift value in D7 to the right by 6 bits
+0000269A  0C07 0001                752              CMPI.B  #$1,D7     *check if opcode is $1 if so it is MOVEA
+0000269E  6700 001E                753              BEQ     MATCH_MOVEA
+000026A2                           754  
+000026A2  220A                     755              MOVE.L  A2,D1
+000026A4  143C 0010                756              MOVE.B  #16,D2
+000026A8  103C 000F                757              MOVE.B  #15,D0
+000026AC  4E4F                     758              TRAP    #15
+000026AE                           759              
+000026AE  43F9 000027C2            760              LEA     MSG_MOVE,A1
+000026B4  103C 000E                761              MOVE.B  #14,D0
+000026B8  4E4F                     762              TRAP    #15
+000026BA  6000 FC52                763              BRA     INCREMENT
+000026BE                           764  
+000026BE                           765  MATCH_MOVEA
+000026BE  220A                     766              MOVE.L  A2,D1
+000026C0  143C 0010                767              MOVE.B  #16,D2
+000026C4  103C 000F                768              MOVE.B  #15,D0
+000026C8  4E4F                     769              TRAP    #15
+000026CA                           770              
+000026CA  43F9 000027CA            771              LEA     MSG_MOVEA,A1
+000026D0  103C 000E                772              MOVE.B  #14,D0
+000026D4  4E4F                     773              TRAP    #15
+000026D6  6000 FC36                774              BRA     INCREMENT
+000026DA                           775              
+000026DA                           776  
+000026DA                           777  
+000026DA  FFFF FFFF                778  END            SIMHALT
+000026DE                           779              
+000026DE                           780              
+000026DE                           781  * ----------------ASCII Codes-----------------
+000026DE  =0000000D                782  CR          EQU     $0D             * ASCII code for Carriage Return
+000026DE  =0000000A                783  LF          EQU     $0A             * ASCII code for Line Feed
+000026DE                           784  
+000026DE                           785  * -------Defined Messages and Variables-------
+000026DE= 50 6C 65 61 73 65 ...    786  DIRECTIONS  DC.B    'Please Enter 6-Digit Hex Address Between 000000 & FFFFF0.',CR,LF,0
+0000271A= 45 6E 74 65 72 20 ...    787  PROMPT1     DC.B    'Enter Startng Address: ',0
+00002732= 45 6E 74 65 72 20 ...    788  PROMPT2     DC.B    'Enter Ending Address: ',0
+00002749= 20 20 20 52 54 53 00     789  MSG_RTS     DC.B    '   RTS',0
+00002750= 20 20 20 4A 53 52 00     790  MSG_JSR     DC.B    '   JSR',0
+00002757= 20 20 20 44 41 54 ...    791  UNKNOWN     DC.B    '   DATA',0
+0000275F= 30 00                    792  ZERO        DC.B    '0',0
+00002761= 20 20 20 00              793  SPACE       DC.B    '   ',0
+00002765= 20 20 20 4C 53 4C 00     794  MSG_LSL     DC.B    '   LSL',0
+0000276C= 20 20 20 4C 53 52 00     795  MSG_LSR     DC.B    '   LSR',0
+00002773= 20 20 20 41 53 4C 00     796  MSG_ASL     DC.B    '   ASL',0
+0000277A= 20 20 20 41 53 52 00     797  MSG_ASR     DC.B    '   ASR',0
+00002781= 20 20 20 4E 4F 54 00     798  MSG_NOT     DC.B    '   NOT',0
+00002788= 20 20 20 42 52 41 00     799  MSG_BRA     DC.B    '   BRA',0
+0000278F= 20 20 20 42 47 54 00     800  MSG_BGT     DC.B    '   BGT',0
+00002796= 20 20 20 42 4C 45 00     801  MSG_BLE     DC.B    '   BLE',0
+0000279D= 20 20 20 42 45 51 00     802  MSG_BEQ     DC.B    '   BEQ',0
+000027A4= 20 20 20 52 4F 52 00     803  MSG_ROR     DC.B    '   ROR',0
+000027AB= 20 20 20 52 4F 4C 00     804  MSG_ROL     DC.B    '   ROL',0
+000027B2= 20 20 20 4E 4F 50 00     805  MSG_NOP     DC.B    '   NOP',0
+000027B9= 20 20 20 4D 4F 56 ...    806  MSG_MOVEQ   DC.B    '   MOVEQ',0
+000027C2= 20 20 20 4D 4F 56 ...    807  MSG_MOVE    DC.B    '   MOVE',0
+000027CA= 20 20 20 4D 4F 56 ...    808  MSG_MOVEA   DC.B    '   MOVEA',0
+000027D3= 20 20 20 41 44 44 00     809  MSG_ADD     DC.B    '   ADD',0
+000027DA= 20 20 20 41 44 44 ...    810  MSG_ADDA    DC.B    '   ADDA',0
+000027E2= 20 20 20 41 44 44 ...    811  MSG_ADDQ    DC.B    '   ADDQ',0
+000027EA= 20 20 20 53 55 42 00     812  MSG_SUB     DC.B    '   SUB',0
+000027F1= 20 20 20 4C 45 41 00     813  MSG_LEA     DC.B    '   LEA',0
+000027F8= 20 20 20 41 4E 44 00     814  MSG_AND     DC.B    '   AND',0
+000027FF= 20 20 20 4F 52 00        815  MSG_OR      DC.B    '   OR',0
+00002805= 20 0D 0A 00              816  BLANK       DC.B    ' ',CR,LF,0
+0000280A                           817  BEGIN       DS.L    1
+0000280E                           818  FIN         DS.L    1
+00002812                           819  
+00002812                           820  
+00002812                           821              END    START 
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+AL                  2516
+ASHIFT              24F0
+BEGIN               280A
+BLANK               2805
+CHARACTER1          2148
+CHARACTER2          2182
+CHECK               2196
+COMBINE1            214C
+COMBINE2            2186
+CONVERTHEX1         212A
+CONVERTHEX2         2164
+CR                  D
+DIRECTIONS          26DE
+DONE                219C
+END                 26DA
+FIN                 280E
+INCREMENT           230E
+INITHEX2            215C
+LF                  A
+LL                  24D4
+LSHIFT              24AE
+MAIN_LOOP           21B4
+MATCH_ADD           254E
+MATCH_ADDA          257E
+MATCH_ADDQ          259A
+MATCH_AND           25EE
+MATCH_BCC           2626
+MATCH_BEQ           267A
+MATCH_BGT           2642
+MATCH_BLE           265E
+MATCH_BRA           2430
+MATCH_JSR           2354
+MATCH_LEA           25D2
+MATCH_MEMASHIFTL    23F8
+MATCH_MEMASHIFTR    23DC
+MATCH_MEMLSHIFTL    23C0
+MATCH_MEMLSHIFTR    23A4
+MATCH_MEMROL        2388
+MATCH_MEMROR        236E
+MATCH_MOVE          2696
+MATCH_MOVEA         26BE
+MATCH_MOVEQ         2532
+MATCH_NOP           233A
+MATCH_NOT           2414
+MATCH_OR            260A
+MATCH_RTS           2320
+MATCH_SHIFT         244C
+MATCH_SUB           25B6
+MSG_ADD             27D3
+MSG_ADDA            27DA
+MSG_ADDQ            27E2
+MSG_AND             27F8
+MSG_ASL             2773
+MSG_ASR             277A
+MSG_BEQ             279D
+MSG_BGT             278F
+MSG_BLE             2796
+MSG_BRA             2788
+MSG_JSR             2750
+MSG_LEA             27F1
+MSG_LSL             2765
+MSG_LSR             276C
+MSG_MOVE            27C2
+MSG_MOVEA           27CA
+MSG_MOVEQ           27B9
+MSG_NOP             27B2
+MSG_NOT             2781
+MSG_OR              27FF
+MSG_ROL             27AB
+MSG_ROR             27A4
+MSG_RTS             2749
+MSG_SUB             27EA
+NOOP                226C
+NUMBER1             2140
+NUMBER2             217A
+OUTPUT              22AE
+PRINT0_B1           22C8
+PRINT0_B2           22F6
+PROMPT1             271A
+PROMPT2             2732
+RL                  2492
+ROTATE              246C
+SPACE               2761
+START               2000
+START_PRG           20D4
+TESTINGCODES        2000
+UNKNOWN             2757
+ZERO                275F
