@@ -5,6 +5,10 @@ This disassembler will translate machine code back into assembly language
 
 ![5](img/5.png)
 
+## Disassembler flowchart
+
+![flowchart](img/flowchart.png)
+
 ## Running the disassembler in [EASy68k](http://www.easy68k.com/)
 1. Open Disassembler.X68 in EASy68k then press the Assemble Source button
 
